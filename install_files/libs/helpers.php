@@ -28,8 +28,8 @@ function getTemplates()
 
 function rchmod($path, $filePerm = 0644, $dirPerm = 0755)
 {
-    if (! file_exists($path)) {
-        return (false);
+    if (!file_exists($path)) {
+        return false;
     }
 
     if (is_file($path)) {
@@ -45,5 +45,5 @@ function rchmod($path, $filePerm = 0644, $dirPerm = 0755)
         chmod($path, $dirPerm);
     }
 
-    return (true);
+    return true;
 }
