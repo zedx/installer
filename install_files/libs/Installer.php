@@ -14,8 +14,8 @@ class Installer
         $this->tempDirectory = $this->baseDirectory.'/install_files/temp';
         $this->databaseDirectory = $this->baseDirectory.DIRECTORY_SEPARATOR.'database';
 
-        if (! is_null($handler = $this->post('handler'))) {
-            if (! strlen($handler)) {
+        if (!is_null($handler = $this->post('handler'))) {
+            if (!strlen($handler)) {
                 exit;
             }
 
@@ -52,7 +52,7 @@ class Installer
         $status = false;
 
         if (in_array($code = $this->post('code'), $codes)) {
-            if (! $this->checkCode($code)) {
+            if (!$this->checkCode($code)) {
                 throw new InstallerException('Fail !', $code);
             }
         }
@@ -61,20 +61,20 @@ class Installer
     public function checkDatabase()
     {
         if ($this->post('db_type') != 'sqlite') {
-            if (! strlen($this->post('db_host'))) {
+            if (!strlen($this->post('db_host'))) {
                 throw new InstallerException('Please specify a database host', 'db_host');
             }
 
-            if (! strlen($this->post('db_username'))) {
+            if (!strlen($this->post('db_username'))) {
                 throw new InstallerException('Please specify a database username', 'db_username');
             }
 
-            if (! strlen($this->post('db_password'))) {
+            if (!strlen($this->post('db_password'))) {
                 throw new InstallerException('Please specify a database password', 'db_password');
             }
         }
 
-        if (! strlen($this->post('db_name'))) {
+        if (!strlen($this->post('db_name'))) {
             throw new InstallerException('Please specify the database name', 'db_name');
         }
 
@@ -131,19 +131,19 @@ class Installer
 
     public function checkAdmin()
     {
-        if (! strlen($this->post('admin_name'))) {
+        if (!strlen($this->post('admin_name'))) {
             throw new InstallerException('Please specify administrator name', 'admin_name');
         }
 
-        if (! strlen($this->post('admin_email'))) {
+        if (!strlen($this->post('admin_email'))) {
             throw new InstallerException('Please specify administrator email address', 'admin_email');
         }
 
-        if (! filter_var($this->post('admin_email'), FILTER_VALIDATE_EMAIL)) {
+        if (!filter_var($this->post('admin_email'), FILTER_VALIDATE_EMAIL)) {
             throw new InstallerException('Please specify valid email address', 'admin_email');
         }
 
-        if (! strlen($this->post('admin_password'))) {
+        if (!strlen($this->post('admin_password'))) {
             throw new InstallerException('Please specify password', 'admin_password');
         }
 
@@ -155,7 +155,7 @@ class Installer
             throw new InstallerException('Please specify password length less than 64 characters', 'admin_password');
         }
 
-        if (! strlen($this->post('admin_password_confirmation'))) {
+        if (!strlen($this->post('admin_password_confirmation'))) {
             throw new InstallerException('Please confirm chosen password', 'admin_password_confirmation');
         }
 
@@ -166,11 +166,11 @@ class Installer
 
     public function checkSettings()
     {
-        if (! strlen($this->post('website_name'))) {
+        if (!strlen($this->post('website_name'))) {
             throw new InstallerException('Please specify your website name', 'website_name');
         }
 
-        if (! strlen($this->post('website_description'))) {
+        if (!strlen($this->post('website_description'))) {
             throw new InstallerException('Please specify your website description', 'website_description');
         }
     }
@@ -193,7 +193,7 @@ class Installer
         $this->log('Extracting ZEDx Core');
         $this->sendEventMessage(1, 'Extracting ZEDx Core', 1);
 
-        if (! $this->unzipFile('zedx-core')) {
+        if (!$this->unzipFile('zedx-core')) {
             $this->log('Extracting ZEDx Core [ FAIL ]');
             throw new InstallerException("Can't extract ZEDx Core", 'zedx-core');
         }
@@ -229,7 +229,7 @@ class Installer
         $this->log('Building Configs');
         $this->sendEventMessage(1, 'Building Configs', 1);
 
-        if (! File::exists(base_path('.env'))) {
+        if (!File::exists(base_path('.env'))) {
             File::copy(base_path('.env.example'), base_path('.env'));
         }
 
@@ -354,14 +354,14 @@ class Installer
     private function bootZEDx()
     {
         $autoloadFile = $this->baseDirectory.'/bootstrap/autoload.php';
-        if (! file_exists($autoloadFile)) {
+        if (!file_exists($autoloadFile)) {
             throw new Exception('Unable to find autoloader: ~/bootstrap/autoload.php');
         }
 
         require $autoloadFile;
 
         $appFile = $this->baseDirectory.'/bootstrap/app.php';
-        if (! file_exists($appFile)) {
+        if (!file_exists($appFile)) {
             throw new Exception('Unable to find app loader: ~/bootstrap/app.php');
         }
 
@@ -445,7 +445,7 @@ class Installer
     public function getBaseUrl()
     {
         if (isset($_SERVER['HTTP_HOST'])) {
-            $baseUrl = ! empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' ? 'https' : 'http';
+            $baseUrl = !empty($_SERVER['HTTPS']) && strtolower($_SERVER['HTTPS']) !== 'off' ? 'https' : 'http';
             $baseUrl .= '://'.$_SERVER['HTTP_HOST'];
             $baseUrl .= str_replace(basename($_SERVER['SCRIPT_NAME']), '', $_SERVER['SCRIPT_NAME']);
         } else {
@@ -463,7 +463,7 @@ class Installer
 
         $directory = dirname($filename);
 
-        if (! is_dir($directory) && ! mkdir($directory, 0777, true)) {
+        if (!is_dir($directory) && !mkdir($directory, 0777, true)) {
             throw new InstallerException("Can't create SQLite storage file", 'db_name');
         }
 
@@ -481,7 +481,7 @@ class Installer
             $destination .= '/'.$directory;
         }
 
-        if (! file_exists($destination)) {
+        if (!file_exists($destination)) {
             mkdir($destination, 0777, true);
         }
 
@@ -549,7 +549,7 @@ class Installer
         $result = null;
         $error = null;
         try {
-            if (! is_dir($this->tempDirectory)) {
+            if (!is_dir($this->tempDirectory)) {
                 $tempDirectory = mkdir($this->tempDirectory, 0777, true);
                 if ($tempDirectory === false) {
                     $this->log('Failed to get create temporary directory: %s', $this->tempDirectory);
@@ -662,7 +662,7 @@ class Installer
             throw new Exception('Server responded with error: '.$error);
         }
 
-        if (! $result || ! strlen($result)) {
+        if (!$result || !strlen($result)) {
             throw new Exception('Server responded had no response.');
         }
 
@@ -671,7 +671,7 @@ class Installer
         } catch (Exception $ex) {
         }
 
-        if (! is_array($_result)) {
+        if (!is_array($_result)) {
             $this->log('Server response: '.$result);
             throw new Exception('Server returned an invalid response.');
         }
