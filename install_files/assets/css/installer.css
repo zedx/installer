@@ -1,0 +1,123 @@
+@import url(http://fonts.googleapis.com/css?family=Roboto+Condensed:400,700);
+
+
+header {
+    color: #fff;
+    background: #34495e;
+}
+
+pre {
+    white-space:pre-line;
+}
+.zedx-logo {
+  margin: 20px auto;
+  width: 190px;
+}
+.board {
+    background: #fff;
+    /*box-shadow: 10px 10px #ccc,-10px 20px #ddd;*/
+}
+
+.nav-tabs.centered > li, .nav-pills.centered > li {
+    float:none;
+    display:inline-block;
+    *display:inline; /* ie7 fix */
+     zoom:1; /* hasLayout ie7 trigger */
+}
+
+.nav-tabs.centered, .nav-pills.centered {
+    text-align:center;
+}
+
+.nav-tabs {
+    position: relative;
+    border-bottom: 0;
+    margin-bottom: 0;
+    box-sizing: border-box;
+}
+
+.nav-tabs > li.active > a, .nav-tabs > li.active > a:hover, .nav-tabs > li.active > a:focus {
+    border: 0;
+}
+
+.tooltip-inner {
+    max-width: 200px;
+    /* If max-width does not work, try using width instead */
+    width: 200px;
+}
+
+.nav-tabs > li > a span.tab {
+    color: #2ECC71;
+    background-color: #34495e;
+}
+
+.nav-tabs > li.active > a span.tab {
+    color: #5dade2;
+    background-color: #34495e;
+}
+
+.nav-tabs > li.disabled > a span.tab {
+    color: #999;
+    background-color: #34495e;
+}
+
+.nav-tabs > li {
+    width: 15%;
+}
+
+.nav-tabs > li a {
+    width: 30px;
+    margin: 26px auto;
+    border: 0;
+    padding: 0;
+}
+
+.tab-pane {
+    position: relative;
+    padding-top: 50px;
+}
+
+.tab-content .head {
+    font-family: 'Roboto Condensed', sans-serif;
+    font-size: 25px;
+    text-transform: uppercase;
+    padding-bottom: 10px;
+}
+
+.check-error span {
+    color:#e74c3c;
+}
+
+.check-waiting span {
+    color:#5dade2;
+}
+
+.check-success span {
+    color :#27AE60
+}
+
+.check-option span{
+    margin-right: 20px;
+}
+
+.note {
+    margin-top: 6px;
+    padding: 0 1px;
+    font-size: 12px;
+    line-height: 15px;
+    color: #999;
+}
+
+@media( max-width: 800px) {
+  .zedx-logo {
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+  }
+}
+
+/* Colors */
+
+.color-green {
+    color: #2ECC71;
+}

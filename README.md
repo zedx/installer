@@ -1,2 +1,1 @@
-# installer
-ZEDx installer
+# ZEDx Installer

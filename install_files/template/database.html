@@ -1,0 +1,28 @@
+<h3 class="head text-center">
+    Database
+</h3>
+<div class="form-horizontal">
+    <div class="form-group">
+        <label for="db_type" class="col-sm-3 control-label">
+            Database Type
+        </label>
+        <div class="col-md-9">
+          <select class="form-control" name="db_type" id="db_type">
+              <option value="mysql">MySQL</option>
+              <option value="postgresql">PostgreSQL</option>
+              <option value="sqlite">SQLite</option>
+              <option value="sqlserver">SQL Server</option>
+          </select>
+          <p class="note"><b>Note:</b> Nombre d'annonces par page à afficher dans le moteur de recherche</p>
+        </div>
+    </div>
+    <div id="database_config_data"></div>
+</div>
+<div id="database-fail"></div>
+<center>
+    <a href="#admin" name="database" class="btn-next btn btn-primary">
+        Next tab
+        <span style="margin-left:10px;" class="fa fa-send">
+        </span>
+    </a>
+</center>
