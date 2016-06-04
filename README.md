@@ -13,8 +13,11 @@ The wizard installation is a recommended way to install ZEDx. It is simpler than
 
 ZEDx CMS has a few system requirements:
 
-* PHP 5.5.9 or higher
+* PHP >= 5.5.9
+* OpenSSL PHP Extension
 * PDO PHP Extension
+* Mbstring PHP Extension
+* Tokenizer PHP Extension
 * cURL PHP Extension
 * MCrypt PHP Extension
 * ZipArchive PHP Library
