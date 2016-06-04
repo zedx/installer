@@ -1,3 +1,5 @@
+# ZEDx wizard installation
+
 The wizard installation is a recommended way to install ZEDx. It is simpler than the command-line installation and doesn't require any special skills.
 
 - Prepare a directory on your server that is empty. It can be a sub-directory, domain root or a sub-domain.
