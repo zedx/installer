@@ -261,7 +261,7 @@ class Installer
         $this->log('Starting Database Migration');
         $this->sendEventMessage(1, 'Starting Database Migration', 1);
 
-        $this->artisan('migrate', ['--seed' => true]);
+        $this->artisan('migrate', ['--seed' => true, '--force' => true]);
         $this->sendEventMessage('COMPLETE', 'Process complete');
     }
 
