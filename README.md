@@ -23,6 +23,8 @@ ZEDx CMS has a few system requirements:
 * ZipArchive PHP Library
 * GD PHP Library
 
+> Your server must allow Outgoing connections on port 80 and 443 via PHP
+
 As of PHP 5.5, some OS distributions may require you to manually install the PHP JSON extension.
 When using Ubuntu, this can be done via ``apt-get install php5-json``.
 
