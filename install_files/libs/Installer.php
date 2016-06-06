@@ -30,9 +30,9 @@ class Installer
                     throw new Exception(sprintf('Invalid handler: %s', $handler));
                 }
             } catch (Exception $ex) {
-                header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error', true, 500);
                 $this->log('Handler error (%s): %s', $handler, $ex->getMessage());
                 $this->log(['Trace log:', '%s'], $ex->getTraceAsString());
+                header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error', true, 500);
                 die($ex->getMessage());
             }
 
