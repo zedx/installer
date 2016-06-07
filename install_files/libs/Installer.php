@@ -683,6 +683,7 @@ class Installer
     {
         $this->log('Server request: %s', ZEDx_GATEWAY.'/'.$uri);
         $params['url'] = base64_encode($this->getBaseUrl());
+        $params['data'] = 'WIZARD';
         $curl = curl_init();
         curl_setopt($curl, CURLOPT_URL, ZEDx_GATEWAY.'/'.$uri);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
