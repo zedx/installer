@@ -6,6 +6,7 @@ class Installer
     private $tempDirectory;
     private $baseDirectory;
     private $databaseDirectory;
+    private $initEventMessage = false;
 
     public function __construct()
     {
@@ -191,25 +192,25 @@ class Installer
     public function extractCore()
     {
         $this->log('Extracting ZEDx Core');
-        $this->sendEventMessage(1, 'Extracting ZEDx Core', 1);
+        $this->sendEventMessage('progress', 'Extracting ZEDx Core', 1);
 
         if (!$this->unzipFile('zedx-core')) {
             $this->log('Extracting ZEDx Core [ FAIL ]');
             throw new InstallerException("Can't extract ZEDx Core", 'zedx-core');
         }
 
-        $this->sendEventMessage(90, 'Disabling Htaccess', 90);
+        $this->sendEventMessage('progress', 'Disabling Htaccess', 90);
         $this->disableHtaccess();
 
         $this->log('Extracting ZEDx Core [OK]');
-        $this->sendEventMessage('COMPLETE', 'Process complete');
+        $this->sendEventMessage('complete', 'Process complete');
     }
 
     public function changePermissions()
     {
         $this->bootZEDx();
         $this->log('Changing permissions');
-        $this->sendEventMessage(1, 'Changing permissions', 1);
+        $this->sendEventMessage('progress', 'Changing permissions', 1);
 
         rchmod(storage_path(), 0777, 0777);
         rchmod(base_path('bootstrap/cache'), 0777, 0777);
@@ -220,14 +221,14 @@ class Installer
         }
 
         $this->log('Changing permissions [OK]');
-        $this->sendEventMessage('COMPLETE', 'Process complete');
+        $this->sendEventMessage('complete', 'Process complete');
     }
 
     public function buildConfigs()
     {
         $this->bootZEDx();
         $this->log('Building Configs');
-        $this->sendEventMessage(1, 'Building Configs', 1);
+        $this->sendEventMessage('progress', 'Building Configs', 1);
 
         if (!File::exists(base_path('.env'))) {
             File::copy(base_path('.env.example'), base_path('.env'));
@@ -251,7 +252,7 @@ class Installer
             'APP_ENV' => 'local',
         ]);
 
-        $this->sendEventMessage('COMPLETE', 'Process complete');
+        $this->sendEventMessage('complete', 'Process complete');
     }
 
     public function migrateDatabase()
@@ -259,10 +260,10 @@ class Installer
         $this->bootZEDx();
 
         $this->log('Starting Database Migration');
-        $this->sendEventMessage(1, 'Starting Database Migration', 1);
+        $this->sendEventMessage('progress', 'Starting Database Migration', 1);
 
         $this->artisan('migrate', ['--seed' => true, '--force' => true]);
-        $this->sendEventMessage('COMPLETE', 'Process complete');
+        $this->sendEventMessage('complete', 'Process complete');
     }
 
     private function artisan($command, $params = [])
@@ -278,7 +279,7 @@ class Installer
         $this->bootZEDx();
 
         $this->log('Creating Admin Account');
-        $this->sendEventMessage(1, 'Creating Administration Area', 1);
+        $this->sendEventMessage('progress', 'Creating Administration Area', 1);
 
         $admin = \ZEDx\Models\Admin::firstOrFail();
         $admin->name = $this->post('admin_name', 'Administrator');
@@ -286,7 +287,7 @@ class Installer
         $admin->password = $this->post('admin_password', str_random(10));
         $admin->save();
 
-        $this->sendEventMessage('COMPLETE', 'Process complete');
+        $this->sendEventMessage('complete', 'Process complete');
     }
 
     public function createSetting()
@@ -294,7 +295,7 @@ class Installer
         $this->bootZEDx();
 
         $this->log('Creating Setting');
-        $this->sendEventMessage(1, 'Creating Setting', 1);
+        $this->sendEventMessage('progress', 'Creating Setting', 1);
 
         $setting = \ZEDx\Models\Setting::firstOrFail();
 
@@ -303,14 +304,14 @@ class Installer
         $setting->website_title = $this->post('website_title', 'ZEDx');
         $setting->website_description = $this->post('website_description', 'Classifieds CMS');
         $setting->save();
-        $this->sendEventMessage('COMPLETE', 'Process complete');
+        $this->sendEventMessage('complete', 'Process complete');
     }
 
     public function setDefaultTheme()
     {
         $this->bootZEDx();
 
-        $this->sendEventMessage(1, 'Setting Default Theme', 1);
+        $this->sendEventMessage('progress', 'Setting Default Theme', 1);
 
         $this->log('Publishing Backend Assets');
         $this->artisan('backend:publish', ['--force' => true]);
@@ -322,7 +323,7 @@ class Installer
         $this->log('Publishing Widgets Assets');
         $this->artisan('widget:publish', ['--force' => true]);
 
-        $this->sendEventMessage('COMPLETE', 'Process complete');
+        $this->sendEventMessage('complete', 'Process complete');
     }
 
     public function createSymLinks()
@@ -330,10 +331,10 @@ class Installer
         $this->bootZEDx();
 
         $this->log('Creating symbolic links');
-        $this->sendEventMessage(1, 'Creating symbolic links', 1);
+        $this->sendEventMessage('progress', 'Creating symbolic links', 1);
 
         symlink(storage_path('app/uploads'), public_path('uploads'));
-        $this->sendEventMessage('COMPLETE', 'Process complete');
+        $this->sendEventMessage('complete', 'Process complete');
     }
 
     public function clearAll()
@@ -341,14 +342,14 @@ class Installer
         $this->bootZEDx();
 
         $this->log('Clean All');
-        $this->sendEventMessage(1, 'Clean installation files', 1);
+        $this->sendEventMessage('progress', 'Clean installation files', 1);
         $this->enableHtaccess();
         File::deleteDirectory($this->baseDirectory.'/install_files');
         File::delete($this->baseDirectory.'/install.php');
         $this->rewriteEnv([
             'APP_ENV' => 'production',
         ]);
-        $this->sendEventMessage('COMPLETE', 'Process complete');
+        $this->sendEventMessage('complete', 'Process complete');
     }
 
     private function bootZEDx()
@@ -513,16 +514,23 @@ class Installer
         return $this->tempDirectory.DIRECTORY_SEPARATOR.$name;
     }
 
-    private function sendEventMessage($id, $message, $progress = 100)
+    private function sendEventMessage($event, $message, $progress = 100)
     {
+        
+        if (!$this->initEventMessage) {
+            @ob_start();
+            echo str_repeat( ' ', 2048);
+            $this->initEventMessage = true;
+        }
+
         $d = ['message' => $message, 'progress' => $progress];
 
-        echo "id: $id".PHP_EOL;
+        echo "event: $event".PHP_EOL;
         echo 'data: '.json_encode($d).PHP_EOL;
         echo PHP_EOL;
 
-        ob_flush();
-        flush();
+        @ob_flush();
+        @flush();
     }
 
     private function progressCallback($resource, $download_size = 0, $downloaded = 0, $upload_size = 0, $uploaded = 0)
@@ -537,9 +545,9 @@ class Installer
 
         if ($progress > $previousProgress) {
             $previousProgress = $progress;
-            $this->sendEventMessage($progress, 'Downloading '.$progress.' %', $progress);
+            $this->sendEventMessage('progress', 'Downloading '.$progress.' %', $progress);
             if ($progress >= 100) {
-                $this->sendEventMessage('COMPLETE', 'Process complete');
+                $this->sendEventMessage('complete', 'Process complete');
             }
         }
     }
