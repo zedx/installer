@@ -21,15 +21,9 @@ header('Pragma: no-cache');
 /*
  * Debug mode
  */
-$isDebug = array_key_exists('debug', $_REQUEST);
 
-if ($isDebug) {
-    ini_set('display_errors', 1);
-    error_reporting(1);
-} else {
-    ini_set('display_errors', 0);
-    error_reporting(0);
-}
+ini_set('display_errors', 1);
+error_reporting( E_ALL );
 
 /*
  * Constants
@@ -56,12 +50,12 @@ function installerShutdown()
     global $installer;
     $error = error_get_last();
     if ($error['type'] == 1) {
-        header('HTTP/1.1 500 Internal Server Error');
         $errorMsg = htmlspecialchars_decode(strip_tags($error['message']));
         echo $errorMsg;
         if (isset($installer)) {
             $installer->log('Fatal error: %s on line %s in file %s', $errorMsg, $error['line'], $error['file']);
         }
+        header('HTTP/1.1 500 Internal Server Error');
         exit;
     }
 }
