@@ -59,6 +59,7 @@ $(function() {
         },
         startTask: function(id, title, url, estimatedTime) {
             var deferred = jQuery.Deferred();
+            console.log("Starting new Task");
 
             zedxTasks.setTitle(title);
             var progressBar = zedxTasks.createProgressBar();
@@ -69,33 +70,33 @@ $(function() {
                 zedxTasks.autoProgress(nextTaskNumber, estimatedTime, progressBar);
             }
 
-            //a message is received
-            es.addEventListener('message', function(e) {
+            var progressHandler = function(e) {
                 var result = JSON.parse( e.data );
+                console.log("Task Sent an Event", result);
+                zedxTasks.addLog(result.message);
+                zedxTasks.progress(result.progress, progressBar);
+            }
 
-                if(e.lastEventId == 'COMPLETE') {
-                    zedxTasks.addLog('Complete');
-                    es.close();
-                    zedxTasks.completeTask(progressBar);
-                    deferred.resolve(result);
-                }else if(e.lastEventId == 'ERROR') {
-                    zedxTasks.addLog('Something going wrong ...');
-                    es.close();
-                    deferred.reject(result);
-                }
-                else {
-                    zedxTasks.addLog(result.message);
-                    zedxTasks.progress(result.progress, progressBar);
-                }
-            });
+            var completeHandler = function(e) {
+                var result = JSON.parse( e.data );
+                zedxTasks.addLog('Please wait while installing ...');
+                es.close();
+                zedxTasks.completeTask(progressBar);
+                console.log("Task Completed");
+                deferred.resolve(result);
+            }
 
-            es.addEventListener('error', function(e) {
+            var errorHandler = function(e) {
                 zedxTasks.addLog('Something going wrong ...');
                 es.close();
                 deferred.reject({
                     message: 'Something going wrong ...'
                 });
-            });
+            }
+
+            es.addEventListener('progress', progressHandler, false);
+            es.addEventListener('complete', completeHandler, false);
+            es.addEventListener('error', errorHandler, false);
 
             return deferred.promise();
         },
@@ -224,7 +225,7 @@ $(function() {
             extractCore: function() {
                 zedxInstaller.serializedData.handler = 'extractCore';
                 var title = 'Extracting ZEDx';
-                zedxInstaller.streamRequest(title, 4000).then(function() {
+                zedxInstaller.streamRequest(title, 100000).then(function() {
                     console.log('extractCore OK');
                     zedxInstaller.process.changePermissions();
                 }, function() {
@@ -234,7 +235,7 @@ $(function() {
             changePermissions: function() {
                 zedxInstaller.serializedData.handler = 'changePermissions';
                 var title = 'Changing Files/Folders permissions';
-                zedxInstaller.streamRequest(title, 1000).then(function() {
+                zedxInstaller.streamRequest(title, 20000).then(function() {
                     console.log('changePermissions OK');
                     zedxInstaller.process.buildConfigs();
                 }, function() {
@@ -244,7 +245,7 @@ $(function() {
             buildConfigs: function() {
                 zedxInstaller.serializedData.handler = 'buildConfigs';
                 var title = 'Configuration';
-                zedxInstaller.streamRequest(title, 2000).then(function() {
+                zedxInstaller.streamRequest(title, 20000).then(function() {
                     console.log('buildConfigs OK');
                     zedxInstaller.process.migrateDatabase();
                 }, function() {
@@ -254,7 +255,7 @@ $(function() {
             migrateDatabase: function() {
                 zedxInstaller.serializedData.handler = 'migrateDatabase';
                 var title = 'Preparing database';
-                zedxInstaller.streamRequest(title, 10000).then(function() {
+                zedxInstaller.streamRequest(title, 100000).then(function() {
                     console.log('migrateDatabase OK');
                     zedxInstaller.process.createAdminAccount();
                 }, function() {
@@ -264,7 +265,7 @@ $(function() {
             createAdminAccount: function() {
                 zedxInstaller.serializedData.handler = 'createAdminAccount';
                 var title = 'Creating Admin account';
-                zedxInstaller.streamRequest(title, 2000).then(function() {
+                zedxInstaller.streamRequest(title, 20000).then(function() {
                     console.log('createAdminAccount OK');
                     zedxInstaller.process.createSetting();
                 }, function() {
@@ -274,7 +275,7 @@ $(function() {
             createSetting: function() {
                 zedxInstaller.serializedData.handler = 'createSetting';
                 var title = 'Apply settings';
-                zedxInstaller.streamRequest(title, 2000).then(function() {
+                zedxInstaller.streamRequest(title, 20000).then(function() {
                     console.log('createSetting OK');
                     zedxInstaller.process.setDefaultTheme();
                 }, function() {
@@ -284,7 +285,7 @@ $(function() {
             setDefaultTheme: function() {
                 zedxInstaller.serializedData.handler = 'setDefaultTheme';
                 var title = 'Setting default theme';
-                zedxInstaller.streamRequest(title, 2000).then(function() {
+                zedxInstaller.streamRequest(title, 20000).then(function() {
                     console.log('setDefaultTheme OK');
                     zedxInstaller.process.createSymLinks();
                 }, function() {
