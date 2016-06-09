@@ -1,5 +1,10 @@
 <?php
 /*
+ * Set timezone
+ */
+date_default_timezone_set('Europe/Paris');
+
+/*
  * Check PHP version
  */
 if (version_compare(PHP_VERSION, '5.5.9', '<')) {
