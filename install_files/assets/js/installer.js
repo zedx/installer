@@ -114,7 +114,7 @@ $(function() {
         steps: ['license', 'check', 'database', 'admin', 'settings', 'build', 'complete'],
         listToCheck: [
             'liveConnection', 'writePermission',
-            'phpVersion', 'pdoLibrary', 'mcryptLibrary',
+            'phpVersion', 'procOpen', 'pdoLibrary', 'mcryptLibrary',
             'mbstringLibrary', 'sslLibrary', 'gdLibrary',
             'curlLibrary', 'zipLibrary'
         ],

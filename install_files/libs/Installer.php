@@ -47,7 +47,7 @@ class Installer
             'liveConnection', 'writePermission',
             'phpVersion', 'pdoLibrary', 'mcryptLibrary',
             'mbstringLibrary', 'sslLibrary', 'gdLibrary',
-            'curlLibrary', 'zipLibrary',
+            'curlLibrary', 'zipLibrary', 'procOpen',
         ];
 
         $status = false;
@@ -516,7 +516,6 @@ class Installer
 
     private function sendEventMessage($event, $message, $progress = 100)
     {
-        
         if (!$this->initEventMessage) {
             @ob_start();
             echo str_repeat( ' ', 2048);
@@ -637,6 +636,9 @@ class Installer
                 break;
             case 'zipLibrary':
                 $result = class_exists('ZipArchive');
+                break;
+            case 'procOpen':
+                $result = function_exists('proc_open');
                 break;
         }
 
