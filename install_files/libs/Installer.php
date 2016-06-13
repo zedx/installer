@@ -518,7 +518,7 @@ class Installer
     {
         if (!$this->initEventMessage) {
             @ob_start();
-            echo str_repeat( ' ', 2048);
+            echo str_repeat(' ', 2048);
             $this->initEventMessage = true;
         }
 

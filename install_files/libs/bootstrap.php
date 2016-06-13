@@ -1,5 +1,10 @@
 <?php
 /*
+ * Set timezone
+ */
+date_default_timezone_set('Europe/Paris');
+
+/*
  * Check PHP version
  */
 if (version_compare(PHP_VERSION, '5.5.9', '<')) {
@@ -23,7 +28,7 @@ header('Pragma: no-cache');
  */
 
 ini_set('display_errors', 1);
-error_reporting( E_ALL );
+error_reporting(E_ALL);
 
 /*
  * Constants
