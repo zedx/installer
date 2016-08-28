@@ -1,4 +1,5 @@
 <?php
+
 class Installer
 {
     private $logFile;
@@ -183,6 +184,7 @@ class Installer
     {
         if ($this->stepCompleted('downloadLatestVersion')) {
             $this->sendEventMessage('complete', 'Process complete');
+
             return;
         }
 
@@ -199,6 +201,7 @@ class Installer
     {
         if ($this->stepCompleted('extractCore')) {
             $this->sendEventMessage('complete', 'Process complete');
+
             return;
         }
 
@@ -217,13 +220,13 @@ class Installer
         $this->sendEventMessage('complete', 'Process complete');
 
         $this->completeStep('extractCore');
-
     }
 
     public function changePermissions()
     {
         if ($this->stepCompleted('changePermissions')) {
             $this->sendEventMessage('complete', 'Process complete');
+
             return;
         }
 
@@ -249,6 +252,7 @@ class Installer
     {
         if ($this->stepCompleted('buildConfigs')) {
             $this->sendEventMessage('complete', 'Process complete');
+
             return;
         }
 
@@ -287,6 +291,7 @@ class Installer
     {
         if ($this->stepCompleted('migrateDatabase')) {
             $this->sendEventMessage('complete', 'Process complete');
+
             return;
         }
 
@@ -313,6 +318,7 @@ class Installer
     {
         if ($this->stepCompleted('createAdminAccount')) {
             $this->sendEventMessage('complete', 'Process complete');
+
             return;
         }
 
@@ -336,6 +342,7 @@ class Installer
     {
         if ($this->stepCompleted('createSetting')) {
             $this->sendEventMessage('complete', 'Process complete');
+
             return;
         }
 
@@ -360,6 +367,7 @@ class Installer
     {
         if ($this->stepCompleted('setDefaultTheme')) {
             $this->sendEventMessage('complete', 'Process complete');
+
             return;
         }
 
@@ -386,6 +394,7 @@ class Installer
     {
         if ($this->stepCompleted('createSymLinks')) {
             $this->sendEventMessage('complete', 'Process complete');
+
             return;
         }
 
@@ -404,6 +413,7 @@ class Installer
     {
         if ($this->stepCompleted('clearAll')) {
             $this->sendEventMessage('complete', 'Process complete');
+
             return;
         }
 
