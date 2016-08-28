@@ -60,7 +60,7 @@ function installerShutdown()
         if (isset($installer)) {
             $installer->log('Fatal error: %s on line %s in file %s', $errorMsg, $error['line'], $error['file']);
         }
-        header('HTTP/1.1 500 Internal Server Error');
+        header($_SERVER['SERVER_PROTOCOL'].' 520 Internal Server Error', true, 520);
         exit;
     }
 }
