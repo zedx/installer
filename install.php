@@ -1,4 +1,7 @@
-<?php include __DIR__.'/install_files/libs/bootstrap.php'; ?>
+<?php
+session_start();
+include __DIR__.'/install_files/libs/bootstrap.php';
+?>
 <!DOCTYPE html>
 <html>
   <head>
