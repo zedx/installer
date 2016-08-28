@@ -1,5 +1,4 @@
 <?php
-
 class Installer
 {
     private $logFile;
@@ -33,7 +32,7 @@ class Installer
             } catch (Exception $ex) {
                 $this->log('Handler error (%s): %s', $handler, $ex->getMessage());
                 $this->log(['Trace log:', '%s'], $ex->getTraceAsString());
-                header($_SERVER['SERVER_PROTOCOL'].' 500 Internal Server Error', true, 500);
+                header($_SERVER['SERVER_PROTOCOL'].' 520 Internal Server Error', true, 520);
                 die($ex->getMessage());
             }
 
@@ -47,7 +46,7 @@ class Installer
             'liveConnection', 'writePermission',
             'phpVersion', 'pdoLibrary', 'mcryptLibrary',
             'mbstringLibrary', 'sslLibrary', 'gdLibrary',
-            'curlLibrary', 'zipLibrary', 'procOpen',
+            'curlLibrary', 'zipLibrary', 'procOpen', 'symbolicLink',
         ];
 
         $status = false;
@@ -182,15 +181,27 @@ class Installer
 
     public function downloadLatestVersion()
     {
+        if ($this->stepCompleted('downloadLatestVersion')) {
+            $this->sendEventMessage('complete', 'Process complete');
+            return;
+        }
+
         $content = json_decode(file_get_contents(ZEDx_GATEWAY));
         $uri = $content->archive;
         $hash = $content->checksum;
 
         $this->requestServerFile('zedx-core', $hash, $uri, ['type' => 'install']);
+
+        $this->completeStep('downloadLatestVersion');
     }
 
     public function extractCore()
     {
+        if ($this->stepCompleted('extractCore')) {
+            $this->sendEventMessage('complete', 'Process complete');
+            return;
+        }
+
         $this->log('Extracting ZEDx Core');
         $this->sendEventMessage('progress', 'Extracting ZEDx Core', 1);
 
@@ -204,10 +215,18 @@ class Installer
 
         $this->log('Extracting ZEDx Core [OK]');
         $this->sendEventMessage('complete', 'Process complete');
+
+        $this->completeStep('extractCore');
+
     }
 
     public function changePermissions()
     {
+        if ($this->stepCompleted('changePermissions')) {
+            $this->sendEventMessage('complete', 'Process complete');
+            return;
+        }
+
         $this->bootZEDx();
         $this->log('Changing permissions');
         $this->sendEventMessage('progress', 'Changing permissions', 1);
@@ -222,10 +241,17 @@ class Installer
 
         $this->log('Changing permissions [OK]');
         $this->sendEventMessage('complete', 'Process complete');
+
+        $this->completeStep('changePermissions');
     }
 
     public function buildConfigs()
     {
+        if ($this->stepCompleted('buildConfigs')) {
+            $this->sendEventMessage('complete', 'Process complete');
+            return;
+        }
+
         $this->bootZEDx();
         $this->log('Building Configs');
         $this->sendEventMessage('progress', 'Building Configs', 1);
@@ -253,10 +279,17 @@ class Installer
         ]);
 
         $this->sendEventMessage('complete', 'Process complete');
+
+        $this->completeStep('buildConfigs');
     }
 
     public function migrateDatabase()
     {
+        if ($this->stepCompleted('migrateDatabase')) {
+            $this->sendEventMessage('complete', 'Process complete');
+            return;
+        }
+
         $this->bootZEDx();
 
         $this->log('Starting Database Migration');
@@ -264,6 +297,8 @@ class Installer
 
         $this->artisan('migrate', ['--seed' => true, '--force' => true]);
         $this->sendEventMessage('complete', 'Process complete');
+
+        $this->completeStep('migrateDatabase');
     }
 
     private function artisan($command, $params = [])
@@ -276,6 +311,11 @@ class Installer
 
     public function createAdminAccount()
     {
+        if ($this->stepCompleted('createAdminAccount')) {
+            $this->sendEventMessage('complete', 'Process complete');
+            return;
+        }
+
         $this->bootZEDx();
 
         $this->log('Creating Admin Account');
@@ -288,10 +328,17 @@ class Installer
         $admin->save();
 
         $this->sendEventMessage('complete', 'Process complete');
+
+        $this->completeStep('createAdminAccount');
     }
 
     public function createSetting()
     {
+        if ($this->stepCompleted('createSetting')) {
+            $this->sendEventMessage('complete', 'Process complete');
+            return;
+        }
+
         $this->bootZEDx();
 
         $this->log('Creating Setting');
@@ -305,10 +352,17 @@ class Installer
         $setting->website_description = $this->post('website_description', 'Classifieds CMS');
         $setting->save();
         $this->sendEventMessage('complete', 'Process complete');
+
+        $this->completeStep('createSetting');
     }
 
     public function setDefaultTheme()
     {
+        if ($this->stepCompleted('setDefaultTheme')) {
+            $this->sendEventMessage('complete', 'Process complete');
+            return;
+        }
+
         $this->bootZEDx();
 
         $this->sendEventMessage('progress', 'Setting Default Theme', 1);
@@ -324,10 +378,17 @@ class Installer
         $this->artisan('widget:publish', ['--force' => true]);
 
         $this->sendEventMessage('complete', 'Process complete');
+
+        $this->completeStep('setDefaultTheme');
     }
 
     public function createSymLinks()
     {
+        if ($this->stepCompleted('createSymLinks')) {
+            $this->sendEventMessage('complete', 'Process complete');
+            return;
+        }
+
         $this->bootZEDx();
 
         $this->log('Creating symbolic links');
@@ -335,10 +396,17 @@ class Installer
 
         symlink(storage_path('app/uploads'), public_path('uploads'));
         $this->sendEventMessage('complete', 'Process complete');
+
+        $this->completeStep('createSymLinks');
     }
 
     public function clearAll()
     {
+        if ($this->stepCompleted('clearAll')) {
+            $this->sendEventMessage('complete', 'Process complete');
+            return;
+        }
+
         $this->bootZEDx();
 
         $this->log('Clean All');
@@ -350,6 +418,8 @@ class Installer
             'APP_ENV' => 'production',
         ]);
         $this->sendEventMessage('complete', 'Process complete');
+
+        $this->completeStep('clearAll');
     }
 
     private function bootZEDx()
@@ -640,6 +710,9 @@ class Installer
             case 'procOpen':
                 $result = function_exists('proc_open');
                 break;
+            case 'symbolicLink':
+                $result = function_exists('symlink');
+                break;
         }
 
         $this->log('Requirement %s %s', $code, ($result ? '[ OK ]' : '[ FAIL ]'));
@@ -805,6 +878,18 @@ class Installer
         ];
 
         file_put_contents($this->logFile, implode(PHP_EOL, $message).PHP_EOL);
+
+        $_SESSION['zedx-install-steps'] = [];
+    }
+
+    protected function stepCompleted($stepName)
+    {
+        return in_array($stepName, $_SESSION['zedx-install-steps']);
+    }
+
+    protected function completeStep($stepName)
+    {
+        array_push($_SESSION['zedx-install-steps'], $stepName);
     }
 
     public function log()
