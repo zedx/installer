@@ -1,4 +1,4 @@
-# ZEDx wizard installation
+# ZEDx wizard installation [![StyleCI](https://styleci.io/repos/60406104/shield)](https://styleci.io/repos/60406104)
 
 The wizard installation is a recommended way to install ZEDx. It is simpler than the command-line installation and doesn't require any special skills.
 
