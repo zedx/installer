@@ -436,14 +436,14 @@ class Installer
     {
         $autoloadFile = $this->baseDirectory.'/bootstrap/autoload.php';
         if (!file_exists($autoloadFile)) {
-            throw new Exception('Unable to find autoloader: ~/bootstrap/autoload.php');
+            throw new Exception('Unable to find autoloader: '.$autoloadFile);
         }
 
         require $autoloadFile;
 
         $appFile = $this->baseDirectory.'/bootstrap/app.php';
         if (!file_exists($appFile)) {
-            throw new Exception('Unable to find app loader: ~/bootstrap/app.php');
+            throw new Exception('Unable to find app loader: '.$appFile);
         }
 
         $app = require_once $appFile;
